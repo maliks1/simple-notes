@@ -3,7 +3,7 @@ import { nanoid } from "nanoid";
 import { supabase } from "@/lib/supabase";
 
 export default async function NewNote() {
-  let token = nanoid(8);
+  let token = nanoid(32);
 
   for (let i = 0; i < 5; i++) { // Maksimal 5x percobaan
     const { error } = await supabase
@@ -15,7 +15,7 @@ export default async function NewNote() {
     }
     
     console.error("DB Insert Error:", error.message); // Lihat error di terminal
-    token = nanoid(8);
+    token = nanoid(32);
   }
 
   // Kalau tetap gagal, tampilkan error
