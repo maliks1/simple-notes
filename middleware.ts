@@ -3,12 +3,12 @@ import { NextRequest, NextResponse } from "next/server";
 import { Ratelimit } from "@upstash/ratelimit";
 import { Redis } from "@upstash/redis";
 
+// Gunakan konfigurasi eksplisit, bukan fromEnv()
 const redis = Redis.fromEnv();
 
-// Batasi pembuatan catatan baru: 3 catatan per 1 menit per IP
 const createNoteLimit = new Ratelimit({
   redis,
-  limiter: Ratelimit.slidingWindow(3, "1 m"),
+  limiter: Ratelimit.slidingWindow(3, "10 m"),
   prefix: "rl:create-note",
 });
 
@@ -20,16 +20,21 @@ function getIP(req: NextRequest): string {
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
-  // Hanya lindungi route pembuatan catatan
   if (pathname === "/n") {
-    const ip = getIP(req);
-    const { success } = await createNoteLimit.limit(ip);
+    try {
+      const ip = getIP(req);
+      const { success } = await createNoteLimit.limit(ip);
 
-    if (!success) {
-      return new NextResponse(
-        "Terlalu banyak catatan dibuat. Silakan coba lagi dalam beberapa menit.",
-        { status: 429 }
-      );
+      if (!success) {
+        return new NextResponse(
+          "Terlalu banyak catatan dibuat. Silakan coba lagi dalam beberapa menit.",
+          { status: 429 }
+        );
+      }
+    } catch (error) {
+      // JANGAN crash — biarkan request lewat jika rate limiter error
+      console.error("Rate limit error:", error);
+      return NextResponse.next();
     }
   }
 
@@ -37,5 +42,5 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/n"], // Hanya route /n yang dilindungi
+  matcher: ["/n"],
 };

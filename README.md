@@ -120,7 +120,7 @@ keamanan dasar tetap diterapkan untuk mencegah penyalahgunaan:
 Pembuatan catatan baru dibatasi menggunakan
 [Upstash Redis](https://upstash.com/) dengan algoritma **sliding window**:
 
-- **Limit:** 3 catatan per 1 menit per alamat IP
+- **Limit:** 3 catatan per 10 menit per alamat IP
 - **Tujuan:** Mencegah spam pembuatan token yang dapat memenuhi database
 - **Implementasi:** Melalui `middleware.ts` di level edge Next.js
 
