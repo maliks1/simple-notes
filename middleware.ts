@@ -3,7 +3,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { Ratelimit } from "@upstash/ratelimit";
 import { Redis } from "@upstash/redis";
 
-// Gunakan konfigurasi eksplisit, bukan fromEnv()
 const redis = Redis.fromEnv();
 
 const createNoteLimit = new Ratelimit({
