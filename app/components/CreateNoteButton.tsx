@@ -40,7 +40,7 @@ export default function CreateNoteButton({ className, children }: Props) {
       }
 
       // Lolos → baru masuk ke editor
-      router.push(`/n/${token}?new=1`);
+      router.push(`/notes/${token}?new=1`);
     } catch {
       setErrorMsg("Gagal terhubung ke server.");
       setStatus("error");
