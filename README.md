@@ -117,7 +117,6 @@ Meskipun aplikasi ini dirancang sederhana tanpa login, beberapa langkah
 keamanan dasar tetap diterapkan untuk mencegah penyalahgunaan:
 
 ### 1. Rate Limiting
-### 1. Rate Limiting
 Pembuatan catatan baru dibatasi menggunakan
 [Upstash Redis](https://upstash.com/) dengan algoritma **sliding window**
 dua lapis:
