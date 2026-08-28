@@ -20,11 +20,12 @@
 
 ## Teknologi yang Digunakan
 
-- **Framework**: [Next.js 16](https://nextjs.org/) (App Router)
-- **Database**: [Supabase](https://supabase.com/) (PostgreSQL)
-- **Styling**: [Tailwind CSS](https://tailwindcss.com/)
-- **ID Generator**: [NanoID](https://github.com/ai/nanoid)
-- **Deployment**: [Vercel](https://vercel.com/) (rekomendasi)
+- **Framework:** [Next.js 16](https://nextjs.org/) (App Router)
+- **Database:** [Supabase](https://supabase.com/) (PostgreSQL)
+- **Styling:** [Tailwind CSS](https://tailwindcss.com/)
+- **ID Generator:** [NanoID](https://github.com/ai/nanoid)
+- **Rate Limiting:** [Upstash Ratelimit](https://github.com/upstash/ratelimit)
+- **Deployment:** [Vercel](https://vercel.com/) (rekomendasi)
 
 ## Instalasi & Penggunaan
 
@@ -109,6 +110,35 @@ simple-notes/
 3. **Berbagi Catatan**
    - Pengguna dapat menyalin URL halaman catatan (misal: `https://simple-notes.vercel.app/n/abc123`).
    - Siapa pun yang mengakses URL tersebut dapat melihat dan mengedit catatan.
+
+## 🔒 Keamanan
+
+Meskipun aplikasi ini dirancang sederhana tanpa login, beberapa langkah
+keamanan dasar tetap diterapkan untuk mencegah penyalahgunaan:
+
+### 1. Rate Limiting
+Pembuatan catatan baru dibatasi menggunakan
+[Upstash Redis](https://upstash.com/) dengan algoritma **sliding window**:
+
+- **Limit:** 3 catatan per 1 menit per alamat IP
+- **Tujuan:** Mencegah spam pembuatan token yang dapat memenuhi database
+- **Implementasi:** Melalui `middleware.ts` di level edge Next.js
+
+### 2. Row Level Security (RLS) Supabase
+Tabel `notes` dilindungi dengan kebijakan RLS yang memungkinkan operasi
+`insert`, `select`, dan `update` untuk role `anon`. Karena aplikasi ini
+tidak menggunakan sistem login, kebijakan ini diperlukan agar fitur tetap
+berfungsi, dengan rate limiting sebagai lapisan perlindungan utama.
+
+### 3. Rendering Dinamis
+Halaman `/n` menggunakan `export const dynamic = "force-dynamic"` untuk
+memastikan setiap permintaan menghasilkan token baru dan mencegah caching
+yang tidak diinginkan di lingkungan serverless seperti Vercel.
+
+### Catatan Keamanan
+Karena sifatnya yang tanpa login, siapa pun yang memiliki URL catatan
+dapat melihat dan mengedit isinya. Jangan gunakan aplikasi ini untuk
+menyimpan informasi sensitif atau rahasia.
 
 ## Deployment
 
