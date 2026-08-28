@@ -117,12 +117,19 @@ Meskipun aplikasi ini dirancang sederhana tanpa login, beberapa langkah
 keamanan dasar tetap diterapkan untuk mencegah penyalahgunaan:
 
 ### 1. Rate Limiting
+### 1. Rate Limiting
 Pembuatan catatan baru dibatasi menggunakan
-[Upstash Redis](https://upstash.com/) dengan algoritma **sliding window**:
+[Upstash Redis](https://upstash.com/) dengan algoritma **sliding window**
+dua lapis:
 
-- **Limit:** 3 catatan per 10 menit per alamat IP
+- **Per visitor:** 3 catatan per 10 menit (berdasarkan cookie anonim)
+- **Per IP:** 30 catatan per 10 menit (sebagai backstop anti-spam)
 - **Tujuan:** Mencegah spam pembuatan token yang dapat memenuhi database
 - **Implementasi:** Melalui `middleware.ts` di level edge Next.js
+
+Pendekatan ini memastikan pengguna di jaringan yang sama (kantor, sekolah,
+NAT) tidak saling memengaruhi kuota, sekaligus tetap membatasi upaya
+spam dari satu alamat IP.
 
 ### 2. Row Level Security (RLS) Supabase
 Tabel `notes` dilindungi dengan kebijakan RLS yang memungkinkan operasi
