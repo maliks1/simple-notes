@@ -20,6 +20,16 @@ export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
   if (pathname === "/n") {
+    // Lewati prefetch & RSC requests — hanya hitung navigasi dokumen nyata
+    const isPrefetch =
+      req.headers.get("next-router-prefetch") === "1" ||
+      req.headers.get("purpose") === "prefetch";
+    const isRSC = req.headers.get("rsc") === "1";
+
+    if (isPrefetch || isRSC) {
+      return NextResponse.next();
+    }
+
     try {
       const ip = getIP(req);
       const { success } = await createNoteLimit.limit(ip);
@@ -31,7 +41,6 @@ export async function middleware(req: NextRequest) {
         );
       }
     } catch (error) {
-      // JANGAN crash — biarkan request lewat jika rate limiter error
       console.error("Rate limit error:", error);
       return NextResponse.next();
     }
