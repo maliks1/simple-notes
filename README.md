@@ -97,9 +97,9 @@ simple-notes/
 ## Cara Kerja
 
 1. **Pembuatan Catatan Baru**
-   - Pengguna mengakses `/n` untuk membuat catatan baru.
+   - Pengguna mengakses `/notes` untuk membuat catatan baru.
    - Aplikasi menghasilkan token unik menggunakan `nanoid`.
-   - Token digunakan untuk membuat URL unik (misal: `/n/abc123`).
+   - Token digunakan untuk membuat URL unik (misal: `/notes/abc123`).
    - Catatan kosong disimpan di Supabase dengan token sebagai kunci.
 
 2. **Penyimpanan Otomatis**
@@ -108,7 +108,7 @@ simple-notes/
    - Status penyimpanan ditampilkan di pojok kanan bawah.
 
 3. **Berbagi Catatan**
-   - Pengguna dapat menyalin URL halaman catatan (misal: `https://simple-notes.vercel.app/n/abc123`).
+   - Pengguna dapat menyalin URL halaman catatan (misal: `https://simple-notes.vercel.app/notes/abc123`).
    - Siapa pun yang mengakses URL tersebut dapat melihat dan mengedit catatan.
 
 ## 🔒 Keamanan
